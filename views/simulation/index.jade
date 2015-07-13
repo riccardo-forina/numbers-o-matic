@@ -6,8 +6,8 @@ block content
       md-icon add
     md-list(ng-controller="SimulationsCtrl")
       md-subheader Latest simulations
-      md-list-item(ng-repeat="simulation in simulations.latest")
-        p(ng-click="showSimulationResults(simulation)") {{ simulation.id }} - {{ simulation.date | date: "short" }}
+      md-list-item(ng-repeat="simulation in simulations.latest" ng-click="showSimulationResults(simulation)")
+        p {{ simulation.id }} - {{ simulation.date | date: "short" }}
         md-icon(ng-if="!simulation.completed && !simulation._checking" ng-click="checkIfCompleted(simulation)") refresh
         md-progress-circular(ng-if="simulation._checking" md-mode="indeterminate")
         md-icon(ng-if="simulation.completed") done

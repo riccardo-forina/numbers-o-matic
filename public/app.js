@@ -70,8 +70,10 @@ angular.module('gaeTest', ['ngMaterial', 'ui.router', 'chart.js'])
     };
 
     $scope.showSimulationResults = function(simulation) {
-      $scope.selectedIndex = undefined;
-      $location.url('/simulations/' + simulation.id);
+      if (simulation.completed) {
+        $scope.selectedIndex = undefined;
+        $location.url('/simulations/' + simulation.id);
+      }
     }
 
     $scope.showDashboard = function() {
