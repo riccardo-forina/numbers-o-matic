@@ -1,0 +1,69 @@
+/*
+	Copyright 2015, Google, Inc.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+"use strict";
+
+var path = require('path');
+
+
+module.exports = {
+  port: process.env.PORT || '8080',
+
+  /* Secret is used by sessions to encrypt the cookie */
+  secret: 'your-secret-here',
+
+  logPath: process.env.LOG_PATH || './',
+
+  /*
+    dataBackend can be 'datastore', 'cloudsql', or 'mongodb'. Be sure to
+    configure the appropriate settings for each storage engine below.
+    Note that datastore requires no additional configuration.
+  */
+  dataBackend: 'datastore',
+
+  /*
+    This can also be your project id as each project has a default
+    bucket with the same name as the project id.
+  */
+  cloudStorageBucket: 'your-cloud-storage-bucket-here',
+
+  /*
+    This is the id of your project in the Google Developers Console.
+  */
+  gcloud: {
+    projectId: 'number-o-matic'
+  },
+
+  /*
+    The client ID and secret can be obtained by generating a new Client ID for
+    a web application on Google Developers Console.
+  */
+  oauth2: {
+    clientId: '713835597395-q8dsu5b0u9o9vp9kkamcjk06qf5hga2g.apps.googleusercontent.com',
+    clientSecret: '8jrXMnnKTdI4XkYFjE6PJAm9',
+    redirectUrl: process.env.OAUTH2_CALLBACK || 'http://localhost/oauth2callback',
+    scopes: ['email', 'profile']
+  },
+
+  mysql: {
+    user: 'your-mysql-user-here',
+    password: 'your-mysql-password-here',
+    host: 'your-mysql-host-here'
+  },
+
+  mongodb: {
+    url: 'your-mongo-url-here',
+    collection: 'your-mongo-collection-here'
+  }
+};

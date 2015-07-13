@@ -1,0 +1,15 @@
+extends ../base.jade
+block content
+  md-content(layout="row" layout-fill)
+    div(flex="20")
+    div(flex)
+      md-card
+        md-card-content
+          h1.md-title Number-O-Matic
+          p Please login using one of the following Authentication Providers.
+          p Credentials for this demo: demo/demo
+          md-actions(layout="row" layout-sm="column" layout-align="end center")
+            md-button(href=login aria-label="Login with Google").md-raised Login with Google
+            md-button(href=login aria-label="Login with your credentials").md-raised Login with your credentials
+    div(flex="20")
+

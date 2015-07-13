@@ -1,0 +1,70 @@
+extends ../base.jade
+
+block content
+  script(type="text/ng-template" id="partials/simulations.html")
+    md-button(ng-click="newSimulation($event)" aria-label="Start a new simulation").md-fab.md-fab-bottom-right
+      md-icon add
+    md-list(ng-controller="SimulationsCtrl")
+      md-subheader Latest simulations
+      md-list-item(ng-repeat="simulation in simulations.latest")
+        p(ng-click="showSimulationResults(simulation)") {{ simulation.id }} - {{ simulation.date | date: "short" }}
+        md-icon(ng-if="!simulation.completed && !simulation._checking" ng-click="checkIfCompleted(simulation)") refresh
+        md-progress-circular(ng-if="simulation._checking" md-mode="indeterminate")
+        md-icon(ng-if="simulation.completed") done
+      md-list-item(ng-if="simulations.latest.length === 0")
+        p No simulation started yet.
+
+  script(type="text/ng-template" id="partials/simulationResults.html")
+
+    md-toolbar(layout="row")
+      .md-toolbar-tools
+        md-button(ng-click="showDashboard()").md-icon-button
+          md-icon menu
+        h2
+          span Simulation results
+
+    div(ng-if='!simulation') Loading data...
+    div(ng-if='simulation' layout-padding)
+      p Numbers count: <strong>{{ simulation.generatedNumbersCount }}</strong>
+      p Different numbers count: <strong>{{ simulation.uniqueNumbers.length }}</strong>
+      p Most frequent number: <strong>{{ simulation.mostFrequentNumber }}</strong> ({{ simulation.numbersCount[ simulation.mostFrequentNumber ] / simulation.generatedNumbersCount * 100 }}%)
+      p Total computation time: {{ simulation.computationTime / 1000000000 }} seconds
+      h2 Numbers distribution
+      canvas(id="pie" class="chart chart-pie" data="pieData" labels="pieLabels")
+
+  script(type="text/ng-template" id="partials/logs.html")
+    md-list(ng-controller="ActivitiesCtrl")
+      md-subheader Latest actions
+      md-list-item(ng-repeat="activity in activities").md-2-lines
+        img(ng-src="{{ activity.user.image.url }}" alt="{{ activity.user.displayName }}").md-avatar
+        .md-list-item-text
+          p {{ activity.date | date: "short" }}
+          p {{ activity.description }}
+
+  div(ng-controller='AppCtrl' layout='row' layout-fill)
+    div(layout="column" layout-fill role="main")
+      div(flex)
+        md-toolbar(layout="row")
+          .md-toolbar-tools
+            h2
+              span Number-O-Matic
+            span(flex)
+            md-menu
+              md-button(ng-click="$mdOpenMenu()" aria-label="Open menu").md-icon-button
+                if profile.image
+                  img.img-circle(src=profile.image.url)
+                else
+                  md-icon(md-svg-icon="social:person")
+              md-menu-content
+                md-menu-item
+                  md-button(href=logout aria-label=logout) Logout
+
+        div(layout='column' layout-fill='' layout-align='top center')
+          md-tabs(md-dynamic-height md-selected="selectedIndex" ng-hide="selectedIndex === undefined")
+            md-tab(label="Simulations")
+            md-tab(label="Activity log")
+
+          div(id="content" ui-view flex)
+
+  div(flex='')
+
