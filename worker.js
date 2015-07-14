@@ -22,20 +22,8 @@ var gcloud = require('gcloud');
 var logging = require('./lib/logging')(config.logPath);
 var background = require('./lib/background')(config.gcloud, logging);
 
-/*
-  We'll pass this to the model so that we don't get an infinite loop of number
-  processing requests.
-*/
-var backgroundStub = {
-  newSimulation: function(simulationId, cb){ if(cb) cb(); }
-};
-
-var model = require('./simulation/model')(config, backgroundStub);
-
-
 /* Keep count of how many numbers this worker has processed */
 var simulationsCount = 0;
-
 
 /*
   When running on Google App Engine Managed VMs, the worker needs

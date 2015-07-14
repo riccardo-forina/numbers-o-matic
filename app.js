@@ -17,7 +17,6 @@
 var path = require('path');
 var express = require('express');
 var session = require('cookie-session');
-var gcloud = require('gcloud');
 var config = require('./config');
 var logging = require('./lib/logging')(config.logPath);
 
@@ -63,8 +62,8 @@ app.use(express.static('public'));
 
 /* Simulation */
 var background = require('./lib/background')(config.gcloud, logging);
-var model = require('./simulation/model')(config, background);
-app.use('/simulation', require('./simulation/urls')(model, oauth2));
+var simulation = require('./simulation/models/simulation')(config, background);
+app.use('/simulation', require('./simulation/urls')(simulation, oauth2));
 
 /* Login */
 app.get('/login', oauth2.template, oauth2.aware, function(req, res) {

@@ -27,7 +27,7 @@ module.exports = function(model, oauth2) {
 
   router.get('/', function index(req, res) {
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      model.list(10, req.query.pageToken,
+      model.list(100, req.query.pageToken, '-date',
         function(err, entities, cursor) {
           if (err) return handleRpcError(err, res);
           res.json({
