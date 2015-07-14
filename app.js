@@ -16,7 +16,8 @@
 
 var path = require('path');
 var express = require('express');
-var session = require('cookie-session');
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 var config = require('./config');
 var logging = require('./lib/logging')(config.logPath);
 
@@ -44,7 +45,10 @@ app.use(logging.requestLogger);
 */
 app.use(session({
   secret: config.secret,
-  signed: true
+  signed: true,
+  resave: true,
+  saveUninitialized: true,
+  store: new FileStore
 }));
 
 
