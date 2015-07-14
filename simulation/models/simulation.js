@@ -61,7 +61,7 @@ if (!Array.prototype.fill) {
 module.exports = function(config, background) {
 
   var simulation = require('./model-datastore')(config, 'Simulation');
-  var simulationBatch = require('./model-datastore')(config, 'SimulationBatch');
+  var simulationBatch = require('./simulationBatch')(config);
 
   function create(cb) {
     simulation.create({ date: new Date() }, function(err, entity) {

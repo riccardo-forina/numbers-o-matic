@@ -17,10 +17,11 @@
 var request = require('request');
 var express = require('express');
 var config = require('./config');
-var gcloud = require('gcloud');
 
 var logging = require('./lib/logging')(config.logPath);
 var background = require('./lib/background')(config.gcloud, logging);
+
+var simulationBatch = require('./simulation/models/simulationBatch')(config);
 
 /* Keep count of how many numbers this worker has processed */
 var simulationsCount = 0;
@@ -70,41 +71,20 @@ background.subscribe(function(message) {
 
 function processSimulationBatch(simulationId, batchId, batchNumber, cb) {
   logging.info("Processing simulation batch", simulationId, batchId, batchNumber);
-  var ds = gcloud.datastore.dataset(config.gcloud);
   var hrstart = process.hrtime();
   var min = 0,
-    max = 50;
+      max = 50;
 
-  var key = ds.key(['SimulationBatch', simulationId + '-' + batchId]);
+  var numbers = [];
+  for (var i = 0; i < 1000; i++) {
+    numbers.push(Math.floor(Math.random() * (max - min + 1)) + min);
+  }
+  var diff = process.hrtime(hrstart);
+  var entity = {
+    simulation: simulationId,
+    numbers: numbers,
+    computationTime: diff[0] * 1e9 + diff[1],
+  };
 
-  ds.get(key, function(err, entity) {
-    if (!entity) {
-      var numbers = [];
-      for (var i = 0; i < 1000; i++) {
-        numbers.push(Math.floor(Math.random() * (max - min + 1)) + min);
-      }
-      var diff = process.hrtime(hrstart);
-      var entity = {
-        key: key,
-        data: [{
-            name: 'simulation',
-            value: simulationId,
-            excludeFromIndexes: false
-          }, {
-            name: 'numbers',
-            value: numbers,
-            excludeFromIndexes: true
-          }, {
-            name: 'computationTime',
-            value: diff[0] * 1e9 + diff[1],
-            excludeFromIndexes: true
-          }
-        ]
-      };
-
-      ds.save(entity, function (err) {
-        if (err) return cb(err);
-      });
-    }
-  });
+  simulationBatch.update(simulationId + '-' + batchId, entity, cb);
 }
