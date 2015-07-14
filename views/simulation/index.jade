@@ -7,9 +7,10 @@ block content
     md-list(ng-controller="SimulationsCtrl")
       md-subheader Latest simulations
       md-list-item(ng-repeat="simulation in simulations.latest" ng-click="showSimulationResults(simulation)").md-3-line
-        h3 {{ simulation.id }}
-        h4 Started by {{ simulation.user }} in date {{ simulation.date | date: "short" }}
-        p {{ simulation.completed ? 'Complete' : 'Running...' }}
+        .md-list-item-text
+          h3 Simulation {{ simulation.id }}
+          h4 Started by {{ simulation.user }} in date {{ simulation.date | date: "short" }}
+          p {{ simulation.completed ? 'Complete' : 'Running...' }}
         md-icon(ng-if="!simulation.completed && !simulation._checking" ng-click="checkIfCompleted(simulation)") refresh
         md-progress-circular(ng-if="simulation._checking" md-mode="indeterminate")
         md-icon(ng-if="simulation.completed") done
