@@ -6,8 +6,10 @@ block content
       md-icon add
     md-list(ng-controller="SimulationsCtrl")
       md-subheader Latest simulations
-      md-list-item(ng-repeat="simulation in simulations.latest" ng-click="showSimulationResults(simulation)")
-        p {{ simulation.id }} - {{ simulation.date | date: "short" }}
+      md-list-item(ng-repeat="simulation in simulations.latest" ng-click="showSimulationResults(simulation)").md-3-line
+        h3 {{ simulation.id }}
+        h4 Started by {{ simulation.user }} in date {{ simulation.date | date: "short" }}
+        p {{ simulation.completed ? 'Complete' : 'Running...' }}
         md-icon(ng-if="!simulation.completed && !simulation._checking" ng-click="checkIfCompleted(simulation)") refresh
         md-progress-circular(ng-if="simulation._checking" md-mode="indeterminate")
         md-icon(ng-if="simulation.completed") done
@@ -32,14 +34,16 @@ block content
       h2 Numbers distribution
       canvas(id="pie" class="chart chart-pie" data="pieData" labels="pieLabels")
 
-  script(type="text/ng-template" id="partials/logs.html")
-    md-list(ng-controller="ActivitiesCtrl")
+  script(type="text/ng-template" id="partials/actions.html")
+    md-list(ng-controller="ActionsCtrl")
       md-subheader Latest actions
-      md-list-item(ng-repeat="activity in activities").md-2-lines
-        img(ng-src="{{ activity.user.image.url }}" alt="{{ activity.user.displayName }}").md-avatar
+      md-list-item(ng-repeat="action in actions.latest").md-3-line
         .md-list-item-text
-          p {{ activity.date | date: "short" }}
-          p {{ activity.description }}
+          h3 {{ action.user }}
+          h4 {{ action.date | date: "short" }}
+          p {{ action.message }}
+      md-list-item(ng-if="actions.latest.length === 0")
+        p Nothing logged yet.
 
   div(ng-controller='AppCtrl' layout='row' layout-fill)
     div(layout="column" layout-fill role="main")

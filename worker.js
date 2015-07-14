@@ -22,6 +22,7 @@ var logging = require('./lib/logging')(config.logPath);
 var background = require('./lib/background')(config.gcloud, logging);
 
 var simulationBatch = require('./simulation/models/simulationBatch')(config);
+var action = require('./simulation/models/action')(config);
 
 /* Keep count of how many numbers this worker has processed */
 var simulationsCount = 0;
@@ -60,8 +61,13 @@ background.subscribe(function(message) {
   if (message.action == 'processSimulation') {
     logging.info('Received request to process simulation ' + message.simulationId + ' batch ' + message.batchId + '/' + message.batchNumber);
     processSimulationBatch(message.simulationId, message.batchId, message.batchNumber, function(err) {
-      if (err) logging.error(err)
-      simulationsCount += 1;
+      if (err) {
+        logging.error(err);
+        action.create("Worker", "Error running batch " + message.batchId + " of " + message.batchNumber +  "  of simulation " + message.simulationId + ": " + err.toString());
+      } else {
+        simulationsCount += 1;
+        action.create("Worker", "Completed batch " + message.batchId + " of " + message.batchNumber +  "  of simulation " + message.simulationId);
+      }
     });
   } else {
     logging.warn('Unknown request', message);

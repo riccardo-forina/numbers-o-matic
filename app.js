@@ -51,19 +51,18 @@ app.use(session({
 /* Include the app engine handlers to respond to start, stop, and health checks. */
 app.use(require('./lib/appengine-handlers'));
 
+/* Simulation */
+var background = require('./lib/background')(config.gcloud, logging);
+var simulation = require('./simulation/models/simulation')(config, background);
+var action = require('./simulation/models/action')(config, background);
 
 /* OAuth2 */
-var oauth2 = require('./lib/oauth2')(config.oauth2);
+var oauth2 = require('./lib/oauth2')(config.oauth2, action);
 
 app.use(oauth2.router);
 
 /* Static files */
 app.use(express.static('public'));
-
-/* Simulation */
-var background = require('./lib/background')(config.gcloud, logging);
-var simulation = require('./simulation/models/simulation')(config, background);
-app.use('/simulation', require('./simulation/urls')(simulation, oauth2));
 
 /* Login */
 app.get('/login', oauth2.template, oauth2.aware, function(req, res) {
@@ -74,15 +73,8 @@ app.get('/login', oauth2.template, oauth2.aware, function(req, res) {
   }
 })
 
-/* Redirect root to /simulation or /login based on login status */
-app.get('/', oauth2.aware, function(req, res) {
-  if (req.session.profile) {
-    res.redirect('/simulation');
-  } else {
-    res.redirect('/login');
-  }
-});
 
+app.use('/', require('./simulation/urls')(simulation, action, oauth2));
 
 /*
   Add the error logger after all middleware and routes so that

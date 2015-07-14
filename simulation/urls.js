@@ -2,7 +2,7 @@
 
 var express = require('express');
 
-module.exports = function(model, oauth2) {
+module.exports = function(simulation, action, oauth2) {
   var router = express.Router();
 
   /*
@@ -18,44 +18,54 @@ module.exports = function(model, oauth2) {
     res.status(err.code || 500).send(err.message);
   }
 
-
-  router.use(function(req, res, next){
-    res.set('Content-Type', 'text/html');
-    next();
-  });
-
-
   router.get('/', function index(req, res) {
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      model.list(100, req.query.pageToken, '-date',
-        function(err, entities, cursor) {
-          if (err) return handleRpcError(err, res);
-          res.json({
-            simulations: entities,
-            nextPageToken: cursor
-          });
-        }
-      );
-    } else {
-      res.render('simulation/index.jade');
-    }
+    res.set('Content-Type', 'text/html');
+    res.render('simulation/index.jade');
   });
 
-  router.post('/', function startSimulation(req, res) {
-    model.create(function(err, entity) {
+  router.get('/simulation', function index(req, res) {
+    res.set('Content-Type', 'application/json');
+    simulation.list(100, req.query.pageToken, '-date',
+      function(err, entities, cursor) {
+        if (err) return handleRpcError(err, res);
+        res.json({
+          simulations: entities,
+          nextPageToken: cursor
+        });
+      }
+    );
+  });
+
+  router.post('/simulation', function startSimulation(req, res) {
+    res.set('Content-Type', 'application/json');
+    simulation.create(req.session.profile.displayName, function(err, entity) {
       if (err) return handleRpcError(err, res);
       res.json({
         simulation: entity
       });
-
+      action.create(req.session.profile.displayName, 'Started new simulation ' + entity.key.path[entity.key.path.length - 1]);
     })
   });
 
-  router.get('/:id', function index(req, res) {
-    model.read(req.params.id,
+  router.get('/simulation/:id', function index(req, res) {
+    res.set('Content-Type', 'application/json');
+    simulation.read(req.params.id,
       function(err, entity, cursor) {
         if (err) return handleRpcError(err, res);
         res.json(entity);
+      }
+    );
+  });
+
+  router.get('/actions', function index(req, res) {
+    res.set('Content-Type', 'application/json');
+    action.list(100, req.query.pageToken, '-date',
+      function(err, entities, cursor) {
+        if (err) return handleRpcError(err, res);
+        res.json({
+          actions: entities,
+          nextPageToken: cursor
+        });
       }
     );
   });

@@ -63,8 +63,11 @@ module.exports = function(config, background) {
   var simulation = require('./model-datastore')(config, 'Simulation');
   var simulationBatch = require('./simulationBatch')(config);
 
-  function create(cb) {
-    simulation.create({ date: new Date() }, function(err, entity) {
+  function create(user, cb) {
+    simulation.create({
+        date: new Date(),
+        user: user
+      }, function(err, entity) {
       if (err) return cb(err)
       background.newSimulation(entity.key.path[entity.key.path.length - 1]);
       cb(null, entity);
@@ -85,6 +88,7 @@ module.exports = function(config, background) {
 
         var simulationData = {
           date: entity.date,
+          user: entity.user,
           generatedNumbersCount: 0,
           uniqueNumbers: [],
           numbersCount: (new Array(51)).fill(0),

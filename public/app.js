@@ -12,9 +12,9 @@ angular.module('gaeTest', ['ngMaterial', 'ui.router', 'chart.js'])
         templateUrl: "partials/simulationResults.html",
         controller: 'SimulationCtrl'
       })
-      .state('logs', {
-        url: "/logs",
-        templateUrl: "partials/logs.html"
+      .state('actions', {
+        url: "/actions",
+        templateUrl: "partials/actions.html"
       })
   })
 
@@ -23,19 +23,32 @@ angular.module('gaeTest', ['ngMaterial', 'ui.router', 'chart.js'])
 
     simulations.latest = [];
     simulations.fetchLatest = function() {
-      $http.get('/simulation/', {latest: true})
+      $http.get('/simulation')
         .success(function(data) {
           simulations.latest = data.simulations;
         });
     };
     simulations.start = function() {
-      $http.post('/simulation/')
+      $http.post('/simulation')
         .success(simulations.fetchLatest);
     };
     simulations.get = function(id) {
       return $http.get('/simulation/' + id);
     };
     return simulations;
+  })
+
+  .factory('actions', function($http) {
+    var actions = {};
+
+    actions.latest = [];
+    actions.fetch = function() {
+      $http.get('/actions')
+        .success(function(data) {
+          actions.latest = data.actions;
+        });
+    };
+    return actions;
   })
 
   .controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log, $mdDialog, $location, simulations) {
@@ -46,7 +59,7 @@ angular.module('gaeTest', ['ngMaterial', 'ui.router', 'chart.js'])
           $location.url("/simulations");
           break;
         case 1:
-          $location.url("/logs");
+          $location.url("/actions");
           break;
       }
     });
@@ -126,35 +139,9 @@ angular.module('gaeTest', ['ngMaterial', 'ui.router', 'chart.js'])
       });
   })
 
-  .controller('ActivitiesCtrl', function($scope) {
-    $scope.activities = getActivities();
-
-    function getActivities() {
-      return [
-        {
-          date: new Date(),
-          description: "todo"
-        },
-        {
-          date: new Date(),
-          description: "todo"
-        },
-        {
-          date: new Date(),
-          description: "todo"
-        },
-        {
-          date: new Date(),
-          description: "todo"
-        },
-        {
-          date: new Date(),
-          description: "todo"
-        }
-      ].sort(function(a, b) {
-          return a.date < b.date;
-        })
-    }
+  .controller('ActionsCtrl', function($scope, actions) {
+    $scope.actions = actions;
+    actions.fetch();
   })
 
 ;
