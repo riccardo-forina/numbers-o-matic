@@ -34,6 +34,6 @@ beta_settings:
     https://www.googleapis.com/auth/cloud-platform
 
 env_variables:
-  OAUTH2_CALLBACK: http://gae-test-1003.appspot.com/oauth2callback
+  OAUTH2_CALLBACK: http://number-o-matic-us.appspot.com/oauth2callback
   LOG_PATH: /var/log/app_engine/custom_logs
   NODE_ENV: production

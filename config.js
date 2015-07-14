@@ -42,7 +42,7 @@ module.exports = {
     This is the id of your project in the Google Developers Console.
   */
   gcloud: {
-    projectId: 'number-o-matic'
+    projectId: 'number-o-matic-us'
   },
 
   /*
@@ -50,8 +50,8 @@ module.exports = {
     a web application on Google Developers Console.
   */
   oauth2: {
-    clientId: '713835597395-q8dsu5b0u9o9vp9kkamcjk06qf5hga2g.apps.googleusercontent.com',
-    clientSecret: '8jrXMnnKTdI4XkYFjE6PJAm9',
+    clientId: '679646606678-lthderck1aag6a8dfh5pglgk9knu38vf.apps.googleusercontent.com',
+    clientSecret: 'cHPgL4mUnSWiSsp2lA7ZXHL5',
     redirectUrl: process.env.OAUTH2_CALLBACK || 'http://localhost/oauth2callback',
     scopes: ['email', 'profile']
   },
